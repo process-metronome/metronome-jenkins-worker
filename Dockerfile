@@ -8,8 +8,10 @@ COPY --from=doctl /app/doctl /usr/local/sbin/doctl
 COPY --from=terraform /bin/terraform /usr/local/sbin/terraform
 COPY entrypoint.sh /usr/sbin/entrypoint.sh
 
-USER jenkins
 RUN chmod +x /usr/sbin/entrypoint.sh
+
+USER jenkins
+
 
 ENV TF_API_TOKEN="" \
     DIGITALOCEAN_ACCESS_TOKEN="" \
