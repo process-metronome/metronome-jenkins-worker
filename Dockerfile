@@ -1,17 +1,19 @@
-ARG DOCTL_VERSION=1.45.0
-ARG HELM_VERSION=3.2.1
+FROM digitalocean/doctl:1.45.0 AS doctl
+FROM hashicorp/terraform:0.13.0 AS terraform
 
-FROM digitalocean/doctl:$DOCTL_VERSION AS doctl
-FROM alpine/helm:$HELM_VERSION AS helm
+FROM jenkins/inbound-agent:alpine AS jnlp
 
-FROM jenkins/jnlp-slave:3.35-5-alpine AS jenkins
 USER root
-RUN apk update && apk add curl docker
+RUN apk --no-cache add curl
+COPY --from=doctl /app/doctl /usr/local/sbin/doctl
+COPY --from=terraform /bin/terraform /usr/local/sbin/terraform
+COPY entrypoint.sh /usr/sbin/entrypoint.sh
 
 USER jenkins
-ENV DIGITALOCEAN_ACCESS_TOKEN='' \
-    CHARTMUSEUM_URL='' \
-    DOCKER_HOST='tcp://localhost:2375'
 
-COPY --from=doctl /app/doctl /usr/local/bin/
-COPY --from=helm /usr/bin/helm /usr/local/bin/
+ENV TF_API_TOKEN="" \
+    DIGITALOCEAN_ACCESS_TOKEN="" \
+    DIGITALOCEAN_REGISTRY=""
+
+##ENTRYPOINT ["/usr/local/bin/jenkins-agent"]
+ENTRYPOINT ["/usr/sbin/entrypoint.sh"]
