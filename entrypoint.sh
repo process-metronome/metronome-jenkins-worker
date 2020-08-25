@@ -22,4 +22,4 @@ if ! [ -z "$DIGITALOCEAN_ACCESS_TOKEN" ]; then
   fi
 fi
 
-exec jenkins-agent -url https://jenkins.eu "$1" "$2"
+exec jenkins-agent "$1" "$2"
