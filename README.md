@@ -1,6 +1,6 @@
 # Description
 
-### Objective
+### Content of the docker image
 
 This docker image shall contain all utilities to perform continuous integration steps from a Jenkins Slave:
 
@@ -10,16 +10,21 @@ This docker image shall contain all utilities to perform continuous integration 
 
 
 ### How to use it
+
 #### Docker CLI
 Use docker login with your Github ID as username and Github Access Token as password. The Access Token should be associated with the 
-packages:read role.
+`packages:read` role.
+
+```bash
+docker login docker.pkg.github.com --username $YOUR_GITHUB_ID
+```
 
 #### Kubernetes
-You must create a docker credential in the target namespace.
+You must create a docker credential in the target namespace as secrets can't be shared accross namespaces.
 
 ```bash
 kubectl create secret docker-registry github-packages \
-    --namespace $RELEVANT_NAMESPACE \
+    --namespace $TARGET_NAMESPACE \
     --docker-server=docker.pkg.github.com \ 
     --docker-username=$YOUR_GITHUB_ID \
     --docker-password=$YOUR_GITHUB_ACCESS_TOKEN
